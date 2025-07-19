@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface CoCareLogoProps {
@@ -7,41 +8,51 @@ interface CoCareLogoProps {
 
 const CoCareLogo: React.FC<CoCareLogoProps> = ({ size = 'md', className = '' }) => {
   const sizeClasses = {
-    sm: 'w-20 h-8',
-    md: 'w-40 h-16', 
-    lg: 'w-60 h-24',
-    xl: 'w-80 h-32'
+    sm: 'w-24 h-8',
+    md: 'w-48 h-16', 
+    lg: 'w-72 h-24',
+    xl: 'w-96 h-32'
   };
 
   return (
     <div className={`${sizeClasses[size]} ${className} flex items-center`}>
       <svg
-        viewBox="0 0 280 80"
+        viewBox="0 0 300 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
       >
-        {/* Heart with puzzle piece cutout */}
+        {/* Heart shape */}
         <path
-          d="M20 30C20 22 26 16 34 16C38 16 42 18 44 22C46 18 50 16 54 16C62 16 68 22 68 30C68 38 44 62 44 62S20 38 20 30Z"
+          d="M20 35C20 25 28 17 38 17C43 17 47 19 50 23C53 19 57 17 62 17C72 17 80 25 80 35C80 45 50 75 50 75S20 45 20 35Z"
           fill="#87CEEB"
         />
         
-        {/* Puzzle piece cutout in heart */}
-        <path
-          d="M48 28L52 28C54 28 56 30 56 32C56 34 54 36 52 36L50 36L50 40C50 42 48 44 46 44C44 44 42 42 42 40L42 36L40 36C38 36 36 34 36 32C36 30 38 28 40 28L44 28L44 24C44 22 46 20 48 20C50 20 52 22 52 24L52 28L48 28Z"
-          fill="white"
-        />
+        {/* Puzzle piece cutout - cross shape with rounded knobs */}
+        <g fill="white">
+          {/* Vertical bar of cross */}
+          <rect x="44" y="25" width="12" height="30" rx="2" />
+          {/* Horizontal bar of cross */}
+          <rect x="30" y="35" width="40" height="10" rx="2" />
+          {/* Top knob */}
+          <circle cx="50" cy="25" r="4" />
+          {/* Bottom knob */}
+          <circle cx="50" cy="55" r="4" />
+          {/* Left knob */}
+          <circle cx="30" cy="40" r="4" />
+          {/* Right knob */}
+          <circle cx="70" cy="40" r="4" />
+        </g>
         
         {/* CoCare text */}
         <text
-          x="85"
-          y="48"
-          fontFamily="Inter, system-ui, sans-serif"
-          fontSize="36"
-          fontWeight="400"
+          x="95"
+          y="50"
+          fontFamily="Inter, system-ui, -apple-system, sans-serif"
+          fontSize="32"
+          fontWeight="600"
           fill="#87CEEB"
-          textAnchor="start"
+          dominantBaseline="middle"
         >
           CoCare
         </text>
