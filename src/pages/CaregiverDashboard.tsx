@@ -37,7 +37,7 @@ const CaregiverDashboard = () => {
       avatar: "/placeholder.svg",
       status: "active",
       lastUpdate: "2 minutes ago",
-      moodScore: 8.2,
+      moodScore: 8,
       activityLevel: "high"
     },
     {
@@ -48,7 +48,7 @@ const CaregiverDashboard = () => {
       avatar: "/placeholder.svg",
       status: "rest",
       lastUpdate: "15 minutes ago",
-      moodScore: 7.5,
+      moodScore: 7,
       activityLevel: "moderate"
     }
   ];
