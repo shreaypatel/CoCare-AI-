@@ -306,6 +306,42 @@ const ChildDashboard = () => {
             </CardContent>
           </Card>
 
+          {/* Calming Games */}
+          <Card className="mb-4">
+            <CardContent>
+              <h3 className="text-xl mb-2">🧠 Calming Games & Brain Benefits</h3>
+              <div className="space-y-4">
+                <div className="bg-pink-100 p-3 rounded-xl shadow">
+                  <h4 className="text-lg font-semibold text-purple-700">🎨 Coloring Game</h4>
+                  <p className="text-gray-700">Let your creativity flow by coloring animals, nature, or abstract shapes!</p>
+                  <p className="text-sm mt-1 text-gray-600"><strong>Brain Activation:</strong> Calms the amygdala (emotion center), stimulates the prefrontal cortex (focus & decision-making).</p>
+                  <Button className="mt-2 bg-purple-500 hover:bg-purple-600 text-white rounded-xl">Start Coloring</Button>
+                </div>
+
+                <div className="bg-yellow-100 p-3 rounded-xl shadow">
+                  <h4 className="text-lg font-semibold text-yellow-700">🧩 Puzzle Matching</h4>
+                  <p className="text-gray-700">Match shapes, animals, or faces! Great for relaxing & pattern recognition.</p>
+                  <p className="text-sm mt-1 text-gray-600"><strong>Brain Activation:</strong> Engages the hippocampus (memory), promotes dopamine release (motivation/reward).</p>
+                  <Button className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl">Play Puzzle</Button>
+                </div>
+
+                <div className="bg-green-100 p-3 rounded-xl shadow">
+                  <h4 className="text-lg font-semibold text-green-700">🌬️ Deep Breathing Game</h4>
+                  <p className="text-gray-700">Follow the circle to breathe in... and out. Feel your body relax as you slow down.</p>
+                  <p className="text-sm mt-1 text-gray-600"><strong>Brain Activation:</strong> Calms the parasympathetic nervous system, reduces cortisol, regulates emotional responses.</p>
+                  <Button className="mt-2 bg-green-500 hover:bg-green-600 text-white rounded-xl">Start Breathing</Button>
+                </div>
+
+                <div className="bg-blue-100 p-3 rounded-xl shadow">
+                  <h4 className="text-lg font-semibold text-blue-700">🎧 Sound Mixer</h4>
+                  <p className="text-gray-700">Mix your own relaxing sounds: rain, ocean, white noise, and melodies!</p>
+                  <p className="text-sm mt-1 text-gray-600"><strong>Brain Activation:</strong> Activates the auditory cortex and reduces limbic overactivity (linked to stress).</p>
+                  <Button className="mt-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl">Try Sound Mixer</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Avatar Shop */}
           <Card>
             <CardHeader>
