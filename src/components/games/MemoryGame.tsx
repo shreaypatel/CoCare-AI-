@@ -75,7 +75,10 @@ export function MemoryGame({ onClose, onWin }: MemoryGameProps) {
       setGameWon(true);
       const finalScore = Math.max(100 - moves * 5, 20);
       setScore(finalScore);
-      onWin(finalScore);
+      // Small delay before awarding coins
+      setTimeout(() => {
+        onWin(finalScore);
+      }, 1000);
     }
   }, [cards, gameWon, moves, onWin]);
 
@@ -133,10 +136,11 @@ export function MemoryGame({ onClose, onWin }: MemoryGameProps) {
           </>
         ) : (
           <div className="text-center space-y-4">
-            <Trophy className="h-16 w-16 mx-auto text-yellow-500" />
+            <Trophy className="h-16 w-16 mx-auto text-yellow-500 animate-bounce" />
             <h3 className="text-xl font-bold">Congratulations!</h3>
             <p className="text-lg">You completed the game in {moves} moves!</p>
-            <p className="text-lg">Final Score: {score}</p>
+            <p className="text-lg">Final Score: {score} points</p>
+            <p className="text-sm text-muted-foreground">You earned {Math.floor(score / 10) + 5} coins!</p>
             <div className="flex gap-2 justify-center">
               <Button onClick={initializeGame} className="flex items-center gap-2">
                 <RefreshCw className="h-4 w-4" />

@@ -31,9 +31,12 @@ export function ColorMatchGame({ onClose, onWin }: ColorMatchGameProps) {
     if (timeLeft > 0 && gameActive) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
+    } else if (timeLeft === 0 && gameActive) {
       setGameActive(false);
-      onWin(score);
+      // Small delay to show final score before calling onWin
+      setTimeout(() => {
+        onWin(score);
+      }, 1000);
     }
   }, [timeLeft, gameActive, score, onWin]);
 
@@ -114,8 +117,9 @@ export function ColorMatchGame({ onClose, onWin }: ColorMatchGameProps) {
         ) : (
           <div className="text-center space-y-4">
             <Trophy className="h-16 w-16 mx-auto text-yellow-500" />
-            <h3 className="text-xl font-bold">Game Over!</h3>
-            <p className="text-lg">Final Score: {score}</p>
+            <h3 className="text-xl font-bold">Time's Up!</h3>
+            <p className="text-lg">Final Score: {score} points</p>
+            <p className="text-sm text-muted-foreground">You earned {Math.floor(score / 10) + 5} coins!</p>
             <div className="flex gap-2 justify-center">
               <Button onClick={resetGame} className="flex items-center gap-2">
                 <RefreshCw className="h-4 w-4" />

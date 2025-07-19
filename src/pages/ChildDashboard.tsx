@@ -66,8 +66,10 @@ const ChildDashboard = () => {
 
   const handleGameWin = (score: number, gameComponent: string) => {
     const game = games.find(g => g.component === gameComponent);
-    const coinsEarned = game ? game.coinReward + Math.floor(score / 10) : 5;
-    setCurrentCoins(currentCoins + coinsEarned);
+    const baseCoins = game ? game.coinReward : 5;
+    const bonusCoins = Math.floor(score / 10);
+    const totalCoins = baseCoins + bonusCoins;
+    setCurrentCoins(currentCoins + totalCoins);
     setActiveGame(null);
   };
 
@@ -273,13 +275,19 @@ const ChildDashboard = () => {
                       <div className="text-2xl">{game.unlocked ? game.icon : <Lock className="h-6 w-6 text-muted-foreground" />}</div>
                       <div className="flex-1">
                         <p className="font-medium">{game.name}</p>
-                        <p className="text-sm text-muted-foreground">{game.difficulty}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm text-muted-foreground">{game.difficulty}</p>
+                          <Badge variant="outline" className="text-xs">
+                            +{game.coinReward} coins
+                          </Badge>
+                        </div>
                       </div>
                       {game.unlocked && (
                         <Button 
                           size="sm" 
-                          variant="outline"
+                          variant="default"
                           onClick={() => game.component && setActiveGame(game.component)}
+                          className="bg-green-500 hover:bg-green-600 text-white"
                         >
                           Play
                         </Button>
@@ -318,8 +326,9 @@ const ChildDashboard = () => {
                         <p className="font-medium">{avatar.name}</p>
                         <div className="flex items-center gap-2">
                           {avatar.cost > 0 && (
-                            <span className="text-sm text-muted-foreground">
-                              {avatar.cost} coins
+                            <span className="text-sm text-muted-foreground flex items-center gap-1">
+                              <Coins className="h-3 w-3" />
+                              {avatar.cost}
                             </span>
                           )}
                           {avatar.equipped && (
@@ -331,19 +340,19 @@ const ChildDashboard = () => {
                         </div>
                       </div>
                       {avatar.equipped ? (
-                        <Button size="sm" variant="default" disabled>
-                          Equipped
+                        <Button size="sm" variant="default" disabled className="bg-primary">
+                          ✓ Equipped
                         </Button>
                       ) : avatar.owned ? (
-                        <Button size="sm" variant="outline" onClick={() => handleEquipAvatar(index)}>
+                        <Button size="sm" variant="outline" onClick={() => handleEquipAvatar(index)} className="hover:bg-primary hover:text-white">
                           Equip
                         </Button>
                       ) : avatar.cost <= currentCoins ? (
-                        <Button size="sm" variant="default" onClick={() => handleBuyAvatar(index)}>
+                        <Button size="sm" variant="default" onClick={() => handleBuyAvatar(index)} className="bg-orange-500 hover:bg-orange-600 text-white">
                           Buy
                         </Button>
                       ) : (
-                        <Button size="sm" variant="ghost" disabled>
+                        <Button size="sm" variant="ghost" disabled className="opacity-50">
                           <Lock className="h-4 w-4" />
                         </Button>
                       )}
