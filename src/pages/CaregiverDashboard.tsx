@@ -122,7 +122,11 @@ const CaregiverDashboard = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-3">
-                <Heart className="h-6 w-6 text-primary" />
+                <img 
+                  src="/lovable-uploads/2e535ae8-5507-4acd-a64c-7a4a615dbd81.png" 
+                  alt="CoCare Logo" 
+                  className="h-8 w-auto"
+                />
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">Caregiver Dashboard</h1>
                   <p className="text-sm text-muted-foreground">Managing care with insights</p>
