@@ -19,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { VoiceRecorder } from "./VoiceRecorder";
 import { Separator } from "@/components/ui/separator";
+import { Plus } from "lucide-react";
 
 interface LogData {
   id: number;
@@ -32,11 +33,11 @@ interface LogData {
   status?: string;
 }
 
-interface EditLogDialogProps {
+interface NewLogDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  log: LogData | null;
-  onSave: (log: LogData) => void;
+  onSave: (log: Omit<LogData, 'id'>) => void;
+  children?: string[];
 }
 
 const activityTypes = [
@@ -52,22 +53,43 @@ const activityTypes = [
   "Free Play"
 ];
 
-export function EditLogDialog({ open, onOpenChange, log, onSave }: EditLogDialogProps) {
-  const [formData, setFormData] = useState<LogData>({
-    id: log?.id || 0,
-    child: log?.child || "",
-    activityType: log?.activityType || "",
-    timeStart: log?.timeStart || "",
-    timeEnd: log?.timeEnd || "",
-    outcome: log?.outcome || "neutral",
-    description: log?.description || "",
-    aiSuggestion: log?.aiSuggestion || "",
-    status: log?.status || "pending"
+export function NewLogDialog({ open, onOpenChange, onSave, children = [] }: NewLogDialogProps) {
+  const [formData, setFormData] = useState({
+    child: "",
+    activityType: "",
+    timeStart: "",
+    timeEnd: "",
+    outcome: "neutral" as "positive" | "negative" | "neutral",
+    description: "",
+    aiSuggestion: "",
+    status: "pending"
   });
 
   const handleSave = () => {
-    onSave(formData);
+    // Generate current time if not specified
+    const now = new Date();
+    const currentTime = now.toTimeString().slice(0, 5);
+    
+    const logData = {
+      ...formData,
+      timeStart: formData.timeStart || currentTime,
+      timeEnd: formData.timeEnd || currentTime,
+    };
+
+    onSave(logData);
     onOpenChange(false);
+    
+    // Reset form
+    setFormData({
+      child: "",
+      activityType: "",
+      timeStart: "",
+      timeEnd: "",
+      outcome: "neutral",
+      description: "",
+      aiSuggestion: "",
+      status: "pending"
+    });
   };
 
   const getOutcomeBadgeVariant = (outcome: string) => {
@@ -79,23 +101,55 @@ export function EditLogDialog({ open, onOpenChange, log, onSave }: EditLogDialog
     }
   };
 
+  // Auto-fill current time
+  const handleTimeAutoFill = () => {
+    const now = new Date();
+    const currentTime = now.toTimeString().slice(0, 5);
+    setFormData({ 
+      ...formData, 
+      timeStart: formData.timeStart || currentTime,
+      timeEnd: currentTime 
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Care Log</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Plus className="h-5 w-5" />
+            Create New Care Log
+          </DialogTitle>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
           {/* Child Name */}
           <div className="grid gap-2">
             <Label htmlFor="child">Child Name</Label>
-            <Input
-              id="child"
-              value={formData.child}
-              onChange={(e) => setFormData({ ...formData, child: e.target.value })}
-              placeholder="Enter child's name"
-            />
+            {children.length > 0 ? (
+              <Select
+                value={formData.child}
+                onValueChange={(value) => setFormData({ ...formData, child: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select child" />
+                </SelectTrigger>
+                <SelectContent>
+                  {children.map((child) => (
+                    <SelectItem key={child} value={child}>
+                      {child}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input
+                id="child"
+                value={formData.child}
+                onChange={(e) => setFormData({ ...formData, child: e.target.value })}
+                placeholder="Enter child's name"
+              />
+            )}
           </div>
 
           {/* Activity Type */}
@@ -131,12 +185,23 @@ export function EditLogDialog({ open, onOpenChange, log, onSave }: EditLogDialog
             </div>
             <div className="grid gap-2">
               <Label htmlFor="timeEnd">End Time</Label>
-              <Input
-                id="timeEnd"
-                type="time"
-                value={formData.timeEnd}
-                onChange={(e) => setFormData({ ...formData, timeEnd: e.target.value })}
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="timeEnd"
+                  type="time"
+                  value={formData.timeEnd}
+                  onChange={(e) => setFormData({ ...formData, timeEnd: e.target.value })}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleTimeAutoFill}
+                  className="shrink-0"
+                >
+                  Now
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -205,7 +270,7 @@ export function EditLogDialog({ open, onOpenChange, log, onSave }: EditLogDialog
 
           {/* Preview Summary */}
           <div className="mt-4 p-4 bg-muted/30 rounded-lg border">
-            <h4 className="font-medium mb-2">Log Summary:</h4>
+            <h4 className="font-medium mb-2">Log Preview:</h4>
             <div className="space-y-1 text-sm">
               <p><span className="font-medium">Child:</span> {formData.child || "Not specified"}</p>
               <p><span className="font-medium">Activity:</span> {formData.activityType || "Not specified"}</p>
@@ -224,8 +289,8 @@ export function EditLogDialog({ open, onOpenChange, log, onSave }: EditLogDialog
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSave}>
-            Save Changes
+          <Button onClick={handleSave} disabled={!formData.child || !formData.activityType}>
+            Create Log
           </Button>
         </div>
       </DialogContent>

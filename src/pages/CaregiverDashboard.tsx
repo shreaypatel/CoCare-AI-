@@ -13,16 +13,19 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  Plus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { EditLogDialog } from "@/components/EditLogDialog";
+import { NewLogDialog } from "@/components/NewLogDialog";
 import CoCareLogo from "@/components/CoCareLogo";
 
 const CaregiverDashboard = () => {
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState("alex");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [newLogDialogOpen, setNewLogDialogOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<any>(null);
 
   const children = [
@@ -93,6 +96,15 @@ const CaregiverDashboard = () => {
 
   const handleSaveLog = (updatedLog: any) => {
     setLogs(logs.map(log => log.id === updatedLog.id ? updatedLog : log));
+  };
+
+  const handleCreateLog = (newLogData: any) => {
+    const newLog = {
+      ...newLogData,
+      id: Math.max(...logs.map(l => l.id)) + 1,
+      date: new Date().toLocaleDateString()
+    };
+    setLogs([newLog, ...logs]);
   };
 
   const getOutcomeBadge = (outcome: string) => {
@@ -239,7 +251,16 @@ const CaregiverDashboard = () => {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Care Logs & AI Insights
-                  <Badge variant="secondary">{logs.length} entries today</Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="secondary">{logs.length} entries today</Badge>
+                    <Button 
+                      onClick={() => setNewLogDialogOpen(true)}
+                      className="flex items-center gap-2"
+                    >
+                      <Plus className="h-4 w-4" />
+                      New Log
+                    </Button>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -355,6 +376,13 @@ const CaregiverDashboard = () => {
         onOpenChange={setEditDialogOpen}
         log={editingLog}
         onSave={handleSaveLog}
+      />
+      
+      <NewLogDialog
+        open={newLogDialogOpen}
+        onOpenChange={setNewLogDialogOpen}
+        onSave={handleCreateLog}
+        children={children.map(child => child.name)}
       />
     </div>
   );
