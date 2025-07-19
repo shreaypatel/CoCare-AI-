@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserCheck, Baby, Heart, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CoCareLogo from "@/components/CoCareLogo";
 
 // Mock database - in a real app, this would be replaced with Supabase
 const mockUsers = [
@@ -94,11 +95,7 @@ const LoginForm = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <img 
-              src="/lovable-uploads/0a4f00ab-2015-4104-8aa4-979cc6fe3aea.png" 
-              alt="CoCare Logo" 
-              className="h-32 w-auto drop-shadow-sm"
-            />
+            <CoCareLogo size="xl" />
           </div>
           <p className="text-muted-foreground">Supporting every moment together</p>
         </div>

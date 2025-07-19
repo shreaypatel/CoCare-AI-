@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { EditLogDialog } from "@/components/EditLogDialog";
+import CoCareLogo from "@/components/CoCareLogo";
 
 const CaregiverDashboard = () => {
   const navigate = useNavigate();
@@ -122,11 +123,7 @@ const CaregiverDashboard = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-4">
-                <img 
-                  src="/lovable-uploads/0a4f00ab-2015-4104-8aa4-979cc6fe3aea.png" 
-                  alt="CoCare Logo" 
-                  className="h-16 w-auto drop-shadow-sm"
-                />
+                <CoCareLogo size="lg" />
                 <div>
                   <h1 className="text-2xl font-bold text-foreground">Caregiver Dashboard</h1>
                   <p className="text-sm text-muted-foreground">Managing care with insights</p>

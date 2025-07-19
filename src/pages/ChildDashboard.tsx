@@ -16,6 +16,7 @@ import {
   Lock
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import CoCareLogo from "@/components/CoCareLogo";
 
 const ChildDashboard = () => {
   const navigate = useNavigate();
@@ -64,11 +65,7 @@ const ChildDashboard = () => {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               <div className="flex items-center gap-4">
-                <img 
-                  src="/lovable-uploads/0a4f00ab-2015-4104-8aa4-979cc6fe3aea.png" 
-                  alt="CoCare Logo" 
-                  className="h-16 w-auto drop-shadow-sm"
-                />
+                <CoCareLogo size="lg" />
                 <div className="relative">
                   <img
                     src="/placeholder.svg"
