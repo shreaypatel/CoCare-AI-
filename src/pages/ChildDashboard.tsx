@@ -63,13 +63,13 @@ const ChildDashboard = () => {
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <img 
-                  src="/lovable-uploads/2e535ae8-5507-4acd-a64c-7a4a615dbd81.png" 
+                  src="/lovable-uploads/0a4f00ab-2015-4104-8aa4-979cc6fe3aea.png" 
                   alt="CoCare Logo" 
-                  className="h-8 w-auto"
+                  className="h-10 w-auto drop-shadow-sm"
                 />
-                <div className="relative ml-2">
+                <div className="relative">
                   <img
                     src="/placeholder.svg"
                     alt="Your avatar"

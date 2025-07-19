@@ -93,11 +93,11 @@ const LoginForm = () => {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="flex items-center justify-center gap-3 mb-6">
             <img 
-              src="/lovable-uploads/2e535ae8-5507-4acd-a64c-7a4a615dbd81.png" 
+              src="/lovable-uploads/0a4f00ab-2015-4104-8aa4-979cc6fe3aea.png" 
               alt="CoCare Logo" 
-              className="h-12 w-auto"
+              className="h-16 w-auto drop-shadow-sm"
             />
           </div>
           <p className="text-muted-foreground">Supporting every moment together</p>
