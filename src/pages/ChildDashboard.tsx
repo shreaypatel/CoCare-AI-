@@ -136,12 +136,7 @@ const ChildDashboard = () => {
               <div className="flex items-center gap-4">
                 <CoCareLogo size="lg" />
                 <div className="relative">
-                  <img
-                    src={childAvatar}
-                    alt="Your avatar"
-                    className="w-16 h-16 rounded-full border-3 border-primary/30 object-cover shadow-lg"
-                  />
-                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-sm shadow-md">
+                  <div className="w-16 h-16 rounded-full border-3 border-primary/30 bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center text-4xl shadow-lg">
                     {getEquippedAvatar().icon}
                   </div>
                 </div>
