@@ -6,7 +6,7 @@ interface CoCareLogoProps {
   className?: string;
 }
 
-const CoCareLogo: React.FC<CoCareLogoProps> = ({ size = 'md', className = '' }) => {
+const CoCareLogo: React.FC<CoCareLogoProps> = ({ size = 'lg', className = '' }) => {
   const sizeClasses = {
     sm: 'w-24 h-8',
     md: 'w-48 h-16', 
