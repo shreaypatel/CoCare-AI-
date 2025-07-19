@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
+import LoginForm from "./components/LoginForm";
 import CaregiverDashboard from "./pages/CaregiverDashboard";
 import ChildDashboard from "./pages/ChildDashboard";
 import NotFound from "./pages/NotFound";
@@ -18,8 +18,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Index />} />
+          <Route path="/" element={<LoginForm />} />
           <Route path="/caregiver" element={<CaregiverDashboard />} />
           <Route path="/child" element={<ChildDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

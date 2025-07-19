@@ -61,12 +61,21 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				'play-green': 'hsl(var(--play-green))',
+				'calm-blue': 'hsl(var(--calm-blue))',
+				'alert-orange': 'hsl(var(--alert-orange))',
+				'rest-purple': 'hsl(var(--rest-purple))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			backgroundImage: {
+				'gradient-soft': 'var(--gradient-soft)',
+				'gradient-warm': 'var(--gradient-warm)',
+				'gradient-calm': 'var(--gradient-calm)'
 			},
 			keyframes: {
 				'accordion-down': {
