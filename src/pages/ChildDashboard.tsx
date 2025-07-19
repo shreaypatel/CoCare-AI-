@@ -17,11 +17,16 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CoCareLogo from "@/components/CoCareLogo";
+import { ColorMatchGame } from "@/components/games/ColorMatchGame";
+import { MemoryGame } from "@/components/games/MemoryGame";
+import { ShapePuzzleGame } from "@/components/games/ShapePuzzleGame";
 
 const ChildDashboard = () => {
   const navigate = useNavigate();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [stimulationLevel, setStimulationLevel] = useState(5);
+  const [activeGame, setActiveGame] = useState<string | null>(null);
+  const [currentCoins, setCurrentCoins] = useState(75);
 
   const moods = [
     { emoji: "😊", label: "Happy", value: "happy" },
@@ -33,10 +38,10 @@ const ChildDashboard = () => {
   ];
 
   const games = [
-    { name: "Color Match", icon: "🎨", difficulty: "Easy", unlocked: true },
-    { name: "Shape Puzzle", icon: "🧩", difficulty: "Medium", unlocked: true },
-    { name: "Memory Game", icon: "🧠", difficulty: "Easy", unlocked: true },
-    { name: "Story Builder", icon: "📚", difficulty: "Hard", unlocked: false }
+    { name: "Color Match", icon: "🎨", difficulty: "Easy", unlocked: true, component: "ColorMatchGame" },
+    { name: "Shape Puzzle", icon: "🧩", difficulty: "Medium", unlocked: true, component: "ShapePuzzleGame" },
+    { name: "Memory Game", icon: "🧠", difficulty: "Easy", unlocked: true, component: "MemoryGame" },
+    { name: "Story Builder", icon: "📚", difficulty: "Hard", unlocked: false, component: null }
   ];
 
   const avatars = [
@@ -47,8 +52,33 @@ const ChildDashboard = () => {
     { name: "Rainbow Dragon", icon: "🐉", cost: 200, owned: false, equipped: false }
   ];
 
-  const currentCoins = 75;
   const loginStreak = 7;
+
+  const handleGameWin = (score: number) => {
+    setCurrentCoins(currentCoins + Math.floor(score / 10));
+    setActiveGame(null);
+  };
+
+  const renderActiveGame = () => {
+    switch (activeGame) {
+      case "ColorMatchGame":
+        return <ColorMatchGame onClose={() => setActiveGame(null)} onWin={handleGameWin} />;
+      case "MemoryGame":
+        return <MemoryGame onClose={() => setActiveGame(null)} onWin={handleGameWin} />;
+      case "ShapePuzzleGame":
+        return <ShapePuzzleGame onClose={() => setActiveGame(null)} onWin={handleGameWin} />;
+      default:
+        return null;
+    }
+  };
+
+  if (activeGame) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/30 flex items-center justify-center p-4">
+        {renderActiveGame()}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
@@ -206,7 +236,11 @@ const ChildDashboard = () => {
                         <p className="text-sm text-muted-foreground">{game.difficulty}</p>
                       </div>
                       {game.unlocked && (
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => game.component && setActiveGame(game.component)}
+                        >
                           Play
                         </Button>
                       )}

@@ -10,10 +10,10 @@ import CoCareLogo from "@/components/CoCareLogo";
 
 // Mock database - in a real app, this would be replaced with Supabase
 const mockUsers = [
-  { id: 1, username: "caregiver1", password: "password123", role: "caregiver", name: "Sarah Johnson" },
-  { id: 2, username: "child1", password: "fun123", role: "child", name: "Alex" },
-  { id: 3, username: "demo_caregiver", password: "demo", role: "caregiver", name: "Demo Caregiver" },
-  { id: 4, username: "demo_child", password: "demo", role: "child", name: "Demo Child" }
+  { id: 1, email: "caregiver@example.com", password: "password123", role: "caregiver", name: "Sarah Johnson" },
+  { id: 2, email: "child@example.com", password: "fun123", role: "child", name: "Alex" },
+  { id: 3, email: "demo@caregiver.com", password: "demo", role: "caregiver", name: "Demo Caregiver" },
+  { id: 4, email: "demo@child.com", password: "demo", role: "child", name: "Demo Child" }
 ];
 
 const LoginForm = () => {
@@ -22,7 +22,7 @@ const LoginForm = () => {
   const [selectedRole, setSelectedRole] = useState<"caregiver" | "child" | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: ""
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -31,9 +31,9 @@ const LoginForm = () => {
     setSelectedRole(role);
     // Pre-fill demo credentials based on role
     if (role === "caregiver") {
-      setFormData({ username: "demo_caregiver", password: "demo" });
+      setFormData({ email: "demo@caregiver.com", password: "demo" });
     } else {
-      setFormData({ username: "demo_child", password: "demo" });
+      setFormData({ email: "demo@child.com", password: "demo" });
     }
   };
 
@@ -62,7 +62,7 @@ const LoginForm = () => {
 
     // Check credentials against mock database
     const user = mockUsers.find(
-      u => u.username === formData.username && 
+      u => u.email === formData.email && 
            u.password === formData.password && 
            u.role === selectedRole
     );
@@ -81,7 +81,7 @@ const LoginForm = () => {
     } else {
       toast({
         title: "Login failed",
-        description: "Invalid username, password, or role",
+        description: "Invalid email, password, or role",
         variant: "destructive"
       });
     }
@@ -155,14 +155,14 @@ const LoginForm = () => {
             <CardContent>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="email">Email</Label>
                   <Input
-                    id="username"
-                    name="username"
-                    type="text"
-                    value={formData.username}
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="Enter your username"
+                    placeholder="Enter your email"
                     required
                   />
                 </div>
@@ -207,7 +207,7 @@ const LoginForm = () => {
               <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
                 <p className="text-xs text-muted-foreground text-center mb-2">Demo Credentials:</p>
                 <p className="text-xs text-muted-foreground text-center">
-                  Username: demo_{selectedRole} | Password: demo
+                  Email: demo@{selectedRole}.com | Password: demo
                 </p>
               </div>
 

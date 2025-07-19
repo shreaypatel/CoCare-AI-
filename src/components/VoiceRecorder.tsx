@@ -119,45 +119,43 @@ export function VoiceRecorder({ onTranscription, placeholder = "Click to start r
   }
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        {!isRecording ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={startRecording}
-            disabled={disabled}
-            className="flex items-center gap-2 hover:bg-primary/10 hover:border-primary/20"
-          >
-            <Mic className="h-4 w-4" />
-            Start Recording
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            onClick={stopRecording}
-            className="flex items-center gap-2 animate-pulse"
-          >
-            <Square className="h-4 w-4" />
-            Stop Recording
-          </Button>
-        )}
-        
-        {isListening && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-            Listening...
-          </div>
-        )}
-      </div>
+    <div className="flex items-center gap-2 w-full">
+      {!isRecording ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={startRecording}
+          disabled={disabled}
+          className="flex items-center gap-2 hover:bg-primary/10 hover:border-primary/20 shrink-0"
+        >
+          <Mic className="h-4 w-4" />
+          Voice
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          onClick={stopRecording}
+          className="flex items-center gap-2 animate-pulse shrink-0"
+        >
+          <Square className="h-4 w-4" />
+          Stop
+        </Button>
+      )}
+      
+      {isListening && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+          Listening...
+        </div>
+      )}
 
       {transcript && (
-        <div className="p-3 bg-muted/50 rounded border text-sm">
-          <p className="font-medium mb-1">Live Transcript:</p>
-          <p className="text-muted-foreground">{transcript}</p>
+        <div className="flex-1 p-2 bg-muted/50 rounded border text-sm">
+          <p className="text-muted-foreground text-xs mb-1">Live transcript:</p>
+          <p className="text-foreground">{transcript}</p>
         </div>
       )}
     </div>

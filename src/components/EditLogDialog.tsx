@@ -183,18 +183,15 @@ export function EditLogDialog({ open, onOpenChange, log, onSave }: EditLogDialog
               rows={4}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Type your description here or use voice recording below..."
+              placeholder="Type your description here..."
             />
             
-            <Separator className="my-2" />
-            
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Voice Recording</Label>
+            <div className="flex items-center gap-2 mt-2">
               <VoiceRecorder
                 onTranscription={(text) => {
                   const currentDescription = formData.description;
                   const newDescription = currentDescription 
-                    ? `${currentDescription}\n\n${text}` 
+                    ? `${currentDescription} ${text}` 
                     : text;
                   setFormData({ ...formData, description: newDescription });
                 }}
