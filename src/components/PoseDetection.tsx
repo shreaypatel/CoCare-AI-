@@ -1,13 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Camera, CameraOff } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Camera, CameraOff, Activity } from 'lucide-react';
+import { useActivityDetection } from '@/hooks/useActivityDetection';
 
 interface PoseDetectionProps {
   onPoseDetected: (pose: string, confidence: number) => void;
+  onLogGenerated?: (log: any) => void;
+  childName?: string;
 }
 
-const PoseDetection: React.FC<PoseDetectionProps> = ({ onPoseDetected }) => {
+const PoseDetection: React.FC<PoseDetectionProps> = ({ 
+  onPoseDetected, 
+  onLogGenerated, 
+  childName = 'Child' 
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isActive, setIsActive] = useState(false);
@@ -15,6 +23,21 @@ const PoseDetection: React.FC<PoseDetectionProps> = ({ onPoseDetected }) => {
   const poseLandmarkerRef = useRef<any>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const lastVideoTimeRef = useRef(-1);
+  
+  const { 
+    currentSession, 
+    activityHistory, 
+    generatedLogs, 
+    processPoseData 
+  } = useActivityDetection(childName);
+
+  // Notify parent when new logs are generated
+  useEffect(() => {
+    if (generatedLogs.length > 0 && onLogGenerated) {
+      const latestLog = generatedLogs[generatedLogs.length - 1];
+      onLogGenerated(latestLog);
+    }
+  }, [generatedLogs, onLogGenerated]);
 
   useEffect(() => {
     loadPoseLandmarker();
@@ -125,7 +148,10 @@ const PoseDetection: React.FC<PoseDetectionProps> = ({ onPoseDetected }) => {
           drawingUtils.drawConnectors(landmark, (await import('@mediapipe/tasks-vision')).PoseLandmarker.POSE_CONNECTIONS);
         }
         
-        // Analyze pose and create log
+        // Process pose data for activity detection
+        processPoseData(result.landmarks);
+        
+        // Keep original pose detection for compatibility
         analyzePose(result.landmarks);
       }
       
@@ -219,6 +245,37 @@ const PoseDetection: React.FC<PoseDetectionProps> = ({ onPoseDetected }) => {
           )}
         </Button>
         
+        {/* Current Activity Display */}
+        {isActive && currentSession && (
+          <div className="flex items-center justify-between p-3 bg-primary/10 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Activity className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium">Current Activity:</span>
+            </div>
+            <Badge variant="secondary" className="capitalize">
+              {currentSession.activity}
+            </Badge>
+          </div>
+        )}
+
+        {/* Activity History */}
+        {activityHistory.length > 0 && (
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Recent Activities:</h4>
+            <div className="space-y-1 max-h-20 overflow-y-auto">
+              {activityHistory.slice(-3).map((session, index) => (
+                <div key={index} className="flex items-center justify-between text-xs p-2 bg-muted rounded">
+                  <span className="capitalize">{session.activity}</span>
+                  <span>{session.startTime.toLocaleTimeString([], { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {isActive && (
           <p className="text-xs text-muted-foreground text-center">
             Activity tracking is active. Move around to log activities automatically!
