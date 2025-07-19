@@ -7,81 +7,44 @@ interface CoCareLogoProps {
 
 const CoCareLogo: React.FC<CoCareLogoProps> = ({ size = 'md', className = '' }) => {
   const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-16 h-16', 
-    lg: 'w-24 h-24',
-    xl: 'w-32 h-32'
+    sm: 'w-20 h-8',
+    md: 'w-40 h-16', 
+    lg: 'w-60 h-24',
+    xl: 'w-80 h-32'
   };
 
   return (
-    <div className={`${sizeClasses[size]} ${className}`}>
+    <div className={`${sizeClasses[size]} ${className} flex items-center`}>
       <svg
-        viewBox="0 0 120 120"
+        viewBox="0 0 280 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-lg"
+        className="w-full h-full"
       >
-        {/* Outer circle with gradient */}
-        <circle
-          cx="60"
-          cy="60"
-          r="58"
-          fill="url(#primaryGradient)"
-          stroke="url(#borderGradient)"
-          strokeWidth="2"
-        />
-        
-        {/* Inner caring hands/heart shape */}
+        {/* Heart with puzzle piece cutout */}
         <path
-          d="M40 45C40 38 45 33 52 33C56 33 59 35 60 38C61 35 64 33 68 33C75 33 80 38 80 45C80 52 60 70 60 70S40 52 40 45Z"
-          fill="white"
-          fillOpacity="0.95"
+          d="M20 30C20 22 26 16 34 16C38 16 42 18 44 22C46 18 50 16 54 16C62 16 68 22 68 30C68 38 44 62 44 62S20 38 20 30Z"
+          fill="#87CEEB"
         />
         
-        {/* Co text */}
-        <text
-          x="30"
-          y="95"
-          fontFamily="Inter, sans-serif"
-          fontSize="18"
-          fontWeight="700"
+        {/* Puzzle piece cutout in heart */}
+        <path
+          d="M48 28L52 28C54 28 56 30 56 32C56 34 54 36 52 36L50 36L50 40C50 42 48 44 46 44C44 44 42 42 42 40L42 36L40 36C38 36 36 34 36 32C36 30 38 28 40 28L44 28L44 24C44 22 46 20 48 20C50 20 52 22 52 24L52 28L48 28Z"
           fill="white"
+        />
+        
+        {/* CoCare text */}
+        <text
+          x="85"
+          y="48"
+          fontFamily="Inter, system-ui, sans-serif"
+          fontSize="36"
+          fontWeight="400"
+          fill="#87CEEB"
           textAnchor="start"
         >
-          Co
+          CoCare
         </text>
-        
-        {/* Care text */}
-        <text
-          x="55"
-          y="95"
-          fontFamily="Inter, sans-serif"
-          fontSize="18"
-          fontWeight="300"
-          fill="white"
-          fillOpacity="0.9"
-          textAnchor="start"
-        >
-          Care
-        </text>
-        
-        {/* Small caring dots around the heart */}
-        <circle cx="45" cy="50" r="2" fill="white" fillOpacity="0.6" />
-        <circle cx="75" cy="50" r="2" fill="white" fillOpacity="0.6" />
-        <circle cx="50" cy="40" r="1.5" fill="white" fillOpacity="0.4" />
-        <circle cx="70" cy="40" r="1.5" fill="white" fillOpacity="0.4" />
-        
-        {/* Gradients */}
-        <defs>
-          <linearGradient id="primaryGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(var(--primary))" />
-            <stop offset="100%" stopColor="hsl(var(--primary-dark))" />
-          </linearGradient>
-          <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(var(--primary-light))" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" />
-          </linearGradient>
-        </defs>
       </svg>
     </div>
   );
