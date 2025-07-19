@@ -4,24 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UserCheck, Baby, Heart, Eye, EyeOff } from "lucide-react";
+import { UserCheck, Baby, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CoCareLogo from "@/components/CoCareLogo";
 
-// Mock database - in a real app, this would be replaced with Supabase
-const mockUsers = [
-  { id: 1, email: "caregiver@example.com", password: "password123", role: "caregiver", name: "Sarah Johnson" },
-  { id: 2, email: "child@example.com", password: "fun123", role: "child", name: "Alex" },
-  { id: 3, email: "demo@caregiver.com", password: "demo", role: "caregiver", name: "Demo Caregiver" },
-  { id: 4, email: "demo@child.com", password: "demo", role: "child", name: "Demo Child" }
-];
-
-const LoginForm = () => {
+const RegisterForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedRole, setSelectedRole] = useState<"caregiver" | "child" | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: ""
   });
@@ -29,12 +22,6 @@ const LoginForm = () => {
 
   const handleRoleSelection = (role: "caregiver" | "child") => {
     setSelectedRole(role);
-    // Pre-fill demo credentials based on role
-    if (role === "caregiver") {
-      setFormData({ email: "demo@caregiver.com", password: "demo" });
-    } else {
-      setFormData({ email: "demo@child.com", password: "demo" });
-    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +31,7 @@ const LoginForm = () => {
     }));
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedRole) {
       toast({
@@ -55,42 +42,59 @@ const LoginForm = () => {
       return;
     }
 
+    if (formData.password.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Get all users from localStorage (including registered ones)
-    const allUsers = [
-      ...mockUsers,
-      ...JSON.parse(localStorage.getItem("mockUsers") || "[]")
-    ];
+    // Get existing users from localStorage
+    const existingUsers = JSON.parse(localStorage.getItem("mockUsers") || "[]");
     
-    // Check credentials against all users
-    const user = allUsers.find(
-      u => u.email === formData.email && 
-           u.password === formData.password && 
-           u.role === selectedRole
-    );
-
-    if (user) {
-      // Store user data in localStorage (in real app, use proper auth)
-      localStorage.setItem("currentUser", JSON.stringify(user));
-      
+    // Check if email already exists
+    const emailExists = existingUsers.some((user: any) => user.email === formData.email);
+    
+    if (emailExists) {
       toast({
-        title: "Login successful!",
-        description: `Welcome back, ${user.name}!`
-      });
-
-      // Navigate to appropriate dashboard
-      navigate(selectedRole === "caregiver" ? "/caregiver" : "/child");
-    } else {
-      toast({
-        title: "Login failed",
-        description: "Invalid email, password, or role",
+        title: "Email already exists",
+        description: "Please use a different email address",
         variant: "destructive"
       });
+      setIsLoading(false);
+      return;
     }
+
+    // Create new user
+    const newUser = {
+      id: Date.now(),
+      email: formData.email,
+      password: formData.password,
+      role: selectedRole,
+      name: formData.name
+    };
+
+    // Add to existing users and save
+    const updatedUsers = [...existingUsers, newUser];
+    localStorage.setItem("mockUsers", JSON.stringify(updatedUsers));
+
+    toast({
+      title: "Registration successful!",
+      description: `Welcome to CoCare, ${formData.name}!`
+    });
+
+    // Auto-login the user
+    localStorage.setItem("currentUser", JSON.stringify(newUser));
+
+    // Navigate to appropriate dashboard
+    navigate(selectedRole === "caregiver" ? "/caregiver" : "/child");
 
     setIsLoading(false);
   };
@@ -103,7 +107,7 @@ const LoginForm = () => {
           <div className="flex items-center justify-center gap-3 mb-6">
             <CoCareLogo size="xl" />
           </div>
-          <p className="text-muted-foreground">Supporting every moment together</p>
+          <p className="text-muted-foreground">Join our caring community</p>
         </div>
 
         {!selectedRole ? (
@@ -142,9 +146,18 @@ const LoginForm = () => {
                 </p>
               </CardContent>
             </Card>
+
+            <div className="text-center mt-6">
+              <p className="text-muted-foreground text-sm">
+                Already have an account?{" "}
+                <Link to="/" className="text-primary hover:underline">
+                  Sign in here
+                </Link>
+              </p>
+            </div>
           </div>
         ) : (
-          /* Login Form */
+          /* Registration Form */
           <Card>
             <CardHeader className="text-center">
               <div className={`mx-auto w-16 h-16 ${selectedRole === "caregiver" ? "bg-gradient-warm" : "bg-gradient-calm"} rounded-full flex items-center justify-center mb-3`}>
@@ -155,11 +168,24 @@ const LoginForm = () => {
                 )}
               </div>
               <CardTitle className="text-xl">
-                {selectedRole === "caregiver" ? "Caregiver Login" : "Child Login"}
+                {selectedRole === "caregiver" ? "Caregiver Registration" : "Child Registration"}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Full Name</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -182,8 +208,9 @@ const LoginForm = () => {
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="Enter your password"
+                      placeholder="Create a password (min 6 characters)"
                       required
+                      minLength={6}
                     />
                     <Button
                       type="button"
@@ -206,22 +233,15 @@ const LoginForm = () => {
                   className="w-full" 
                   disabled={isLoading}
                 >
-                  {isLoading ? "Signing in..." : "Sign In"}
+                  {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
               </form>
 
-              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/50">
-                <p className="text-xs text-muted-foreground text-center mb-2">Demo Credentials:</p>
-                <p className="text-xs text-muted-foreground text-center">
-                  Email: demo@{selectedRole}.com | Password: demo
-                </p>
-              </div>
-
               <div className="text-center mt-4">
                 <p className="text-muted-foreground text-sm">
-                  Don't have an account?{" "}
-                  <Link to="/register" className="text-primary hover:underline">
-                    Register here
+                  Already have an account?{" "}
+                  <Link to="/" className="text-primary hover:underline">
+                    Sign in here
                   </Link>
                 </p>
               </div>
@@ -241,4 +261,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
