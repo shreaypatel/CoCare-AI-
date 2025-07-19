@@ -16,10 +16,13 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { EditLogDialog } from "@/components/EditLogDialog";
 
 const CaregiverDashboard = () => {
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState("alex");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editingLog, setEditingLog] = useState<any>(null);
 
   const children = [
     {
@@ -46,35 +49,63 @@ const CaregiverDashboard = () => {
     }
   ];
 
-  const logs = [
+  const [logs, setLogs] = useState([
     {
       id: 1,
       child: "Alex Johnson",
-      time: "2:30 PM",
-      type: "mood",
-      content: "Alex expressed feeling happy after completing puzzle activity",
+      activityType: "Educational",
+      timeStart: "14:00",
+      timeEnd: "14:30",
+      outcome: "positive" as const,
+      description: "Alex expressed feeling happy after completing puzzle activity. Showed great focus and problem-solving skills.",
       aiSuggestion: "Consider introducing more puzzle-based learning activities",
       status: "pending"
     },
     {
       id: 2,
       child: "Emma Davis", 
-      time: "1:45 PM",
-      type: "behavior",
-      content: "Emma showed increased focus during story time",
+      activityType: "Social Interaction",
+      timeStart: "13:15",
+      timeEnd: "13:45",
+      outcome: "positive" as const,
+      description: "Emma showed increased focus during story time. Actively participated in group discussion.",
       aiSuggestion: "Story-based learning appears effective for Emma's attention span",
       status: "reviewed"
     },
     {
       id: 3,
       child: "Alex Johnson",
-      time: "12:15 PM",
-      type: "activity",
-      content: "Completed physical exercise routine with enthusiasm",
+      activityType: "Physical Activity",
+      timeStart: "12:00",
+      timeEnd: "12:15",
+      outcome: "positive" as const,
+      description: "Completed physical exercise routine with enthusiasm. Maintained good energy throughout.",
       aiSuggestion: "Physical activities boost Alex's mood - maintain current schedule",
       status: "approved"
     }
-  ];
+  ]);
+
+  const handleEditLog = (log: any) => {
+    setEditingLog(log);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveLog = (updatedLog: any) => {
+    setLogs(logs.map(log => log.id === updatedLog.id ? updatedLog : log));
+  };
+
+  const getOutcomeBadge = (outcome: string) => {
+    switch (outcome) {
+      case "positive":
+        return <Badge className="bg-green-500/20 text-green-700 border-green-300">Positive</Badge>;
+      case "negative":
+        return <Badge className="bg-red-500/20 text-red-700 border-red-300">Negative</Badge>;
+      case "neutral":
+        return <Badge className="bg-gray-500/20 text-gray-700 border-gray-300">Neutral</Badge>;
+      default:
+        return <Badge variant="secondary">{outcome}</Badge>;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/30">
@@ -184,12 +215,15 @@ const CaregiverDashboard = () => {
                     <div key={log.id} className="flex items-start gap-4 p-4 bg-muted/30 rounded-lg">
                       <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <p className="font-medium">{log.child}</p>
-                          <Badge variant="outline" className="text-xs">{log.type}</Badge>
-                          <span className="text-sm text-muted-foreground">{log.time}</span>
+                          <Badge variant="outline" className="text-xs">{log.activityType}</Badge>
+                          {getOutcomeBadge(log.outcome)}
+                          <span className="text-sm text-muted-foreground">
+                            {log.timeStart} - {log.timeEnd}
+                          </span>
                         </div>
-                        <p className="text-sm text-muted-foreground">{log.content}</p>
+                        <p className="text-sm text-muted-foreground">{log.description}</p>
                       </div>
                     </div>
                   ))}
@@ -212,20 +246,23 @@ const CaregiverDashboard = () => {
                   {logs.map((log) => (
                     <div key={log.id} className="border border-border/50 rounded-lg p-4">
                       <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
                           <div className="w-3 h-3 bg-primary rounded-full"></div>
                           <div>
                             <p className="font-medium">{log.child}</p>
-                            <p className="text-sm text-muted-foreground">{log.time}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {log.timeStart} - {log.timeEnd}
+                            </p>
                           </div>
-                          <Badge variant="outline">{log.type}</Badge>
+                          <Badge variant="outline">{log.activityType}</Badge>
+                          {getOutcomeBadge(log.outcome)}
                         </div>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" onClick={() => handleEditLog(log)}>
                           <Edit3 className="h-4 w-4" />
                         </Button>
                       </div>
                       
-                      <p className="text-sm mb-3">{log.content}</p>
+                      <p className="text-sm mb-3">{log.description}</p>
                       
                       <div className="bg-accent/50 rounded-lg p-3 border border-accent/20">
                         <div className="flex items-start gap-2">
@@ -311,6 +348,13 @@ const CaregiverDashboard = () => {
           </TabsContent>
         </Tabs>
       </main>
+
+      <EditLogDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        log={editingLog}
+        onSave={handleSaveLog}
+      />
     </div>
   );
 };
