@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { 
   Users, 
   FileText, 
@@ -14,7 +17,10 @@ import {
   CheckCircle,
   Clock,
   ArrowLeft,
-  Plus
+  Plus,
+  X,
+  Calendar,
+  BarChart3
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +35,10 @@ const CaregiverDashboard = () => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [newLogDialogOpen, setNewLogDialogOpen] = useState(false);
   const [editingLog, setEditingLog] = useState<any>(null);
+  const [behaviorGraphOpen, setBehaviorGraphOpen] = useState(false);
+  const [dailyLogsOpen, setDailyLogsOpen] = useState(false);
+  const [selectedChildForView, setSelectedChildForView] = useState<any>(null);
+  const [timeRange, setTimeRange] = useState("weekly");
 
   const children = [
     {
@@ -91,6 +101,33 @@ const CaregiverDashboard = () => {
     }
   ]);
 
+  // Sample behavior data for graphs
+  const behaviorData = {
+    weekly: [
+      { day: 'Mon', mood: 8, activity: 7, social: 6 },
+      { day: 'Tue', mood: 7, activity: 8, social: 7 },
+      { day: 'Wed', mood: 9, activity: 6, social: 8 },
+      { day: 'Thu', mood: 6, activity: 9, social: 5 },
+      { day: 'Fri', mood: 8, activity: 7, social: 7 },
+      { day: 'Sat', mood: 9, activity: 8, social: 9 },
+      { day: 'Sun', mood: 7, activity: 6, social: 6 },
+    ],
+    monthly: [
+      { period: 'Week 1', mood: 7.5, activity: 7.2, social: 6.8 },
+      { period: 'Week 2', mood: 8.1, activity: 7.8, social: 7.2 },
+      { period: 'Week 3', mood: 7.8, activity: 8.2, social: 7.5 },
+      { period: 'Week 4', mood: 8.3, activity: 7.5, social: 8.1 },
+    ],
+    yearly: [
+      { period: 'Jan', mood: 7.2, activity: 6.8, social: 6.5 },
+      { period: 'Feb', mood: 7.5, activity: 7.1, social: 6.9 },
+      { period: 'Mar', mood: 7.8, activity: 7.4, social: 7.2 },
+      { period: 'Apr', mood: 8.1, activity: 7.7, social: 7.5 },
+      { period: 'May', mood: 8.3, activity: 8.0, social: 7.8 },
+      { period: 'Jun', mood: 8.5, activity: 8.2, social: 8.1 },
+    ]
+  };
+
   const handleEditLog = (log: any) => {
     setEditingLog(log);
     setEditDialogOpen(true);
@@ -107,6 +144,20 @@ const CaregiverDashboard = () => {
       date: new Date().toLocaleDateString()
     };
     setLogs([newLog, ...logs]);
+  };
+
+  const handleViewBehaviorGraph = (child: any) => {
+    setSelectedChildForView(child);
+    setBehaviorGraphOpen(true);
+  };
+
+  const handleViewDailyLogs = (child: any) => {
+    setSelectedChildForView(child);
+    setDailyLogsOpen(true);
+  };
+
+  const getChildLogs = (childName: string) => {
+    return logs.filter(log => log.child === childName);
   };
 
   const getOutcomeBadge = (outcome: string) => {
@@ -389,12 +440,7 @@ const CaregiverDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="w-full justify-start"
-                        onClick={() => {
-                          toast({
-                            title: "Behavior Graph",
-                            description: `Opening behavior analytics for ${child.name}...`
-                          });
-                        }}
+                        onClick={() => handleViewBehaviorGraph(child)}
                       >
                         <TrendingUp className="h-4 w-4 mr-2" />
                         View Behavior Graph
@@ -402,14 +448,7 @@ const CaregiverDashboard = () => {
                       <Button 
                         variant="outline" 
                         className="w-full justify-start"
-                        onClick={() => {
-                          // Filter logs for this child and show relevant logs
-                          const childLogs = logs.filter(log => log.child === child.name);
-                          toast({
-                            title: "Daily Logs",
-                            description: `Found ${childLogs.length} logs for ${child.name} today`
-                          });
-                        }}
+                        onClick={() => handleViewDailyLogs(child)}
                       >
                         <FileText className="h-4 w-4 mr-2" />
                         View Daily Logs
@@ -436,6 +475,226 @@ const CaregiverDashboard = () => {
         onSave={handleCreateLog}
         children={children.map(child => child.name)}
       />
+
+      {/* Behavior Graph Dialog */}
+      <Dialog open={behaviorGraphOpen} onOpenChange={setBehaviorGraphOpen}>
+        <DialogContent className="max-w-4xl h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              Behavior Analytics - {selectedChildForView?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Time Range:</span>
+              </div>
+              <Select value={timeRange} onValueChange={setTimeRange}>
+                <SelectTrigger className="w-32">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[calc(100%-3rem)]">
+              {/* Mood & Activity Line Chart */}
+              <Card className="flex-1">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Mood & Activity Trends</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={behaviorData[timeRange as keyof typeof behaviorData]}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey={timeRange === 'weekly' ? 'day' : 'period'} 
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis domain={[0, 10]} tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Line 
+                        type="monotone" 
+                        dataKey="mood" 
+                        stroke="#8884d8" 
+                        strokeWidth={2}
+                        name="Mood Score"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="activity" 
+                        stroke="#82ca9d" 
+                        strokeWidth={2}
+                        name="Activity Level"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Social Interaction Bar Chart */}
+              <Card className="flex-1">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-base">Social Interaction</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={behaviorData[timeRange as keyof typeof behaviorData]}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis 
+                        dataKey={timeRange === 'weekly' ? 'day' : 'period'} 
+                        tick={{ fontSize: 12 }}
+                      />
+                      <YAxis domain={[0, 10]} tick={{ fontSize: 12 }} />
+                      <Tooltip />
+                      <Bar 
+                        dataKey="social" 
+                        fill="#ffc658" 
+                        name="Social Score"
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+              {behaviorData[timeRange as keyof typeof behaviorData].length > 0 && (
+                <>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-blue-600">
+                      {(behaviorData[timeRange as keyof typeof behaviorData]
+                        .reduce((sum, item) => sum + item.mood, 0) / 
+                        behaviorData[timeRange as keyof typeof behaviorData].length).toFixed(1)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Avg Mood</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-green-600">
+                      {(behaviorData[timeRange as keyof typeof behaviorData]
+                        .reduce((sum, item) => sum + item.activity, 0) / 
+                        behaviorData[timeRange as keyof typeof behaviorData].length).toFixed(1)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Avg Activity</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-orange-600">
+                      {(behaviorData[timeRange as keyof typeof behaviorData]
+                        .reduce((sum, item) => sum + item.social, 0) / 
+                        behaviorData[timeRange as keyof typeof behaviorData].length).toFixed(1)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Avg Social</div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Daily Logs Dialog */}
+      <Dialog open={dailyLogsOpen} onOpenChange={setDailyLogsOpen}>
+        <DialogContent className="max-w-3xl h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              Daily Logs - {selectedChildForView?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto space-y-4">
+            {selectedChildForView && getChildLogs(selectedChildForView.name).length > 0 ? (
+              getChildLogs(selectedChildForView.name).map((log) => (
+                <div key={log.id} className="border border-border/50 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <div className="w-3 h-3 bg-primary rounded-full"></div>
+                      <div>
+                        <p className="font-medium">{log.activityType}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {log.timeStart} - {log.timeEnd}
+                        </p>
+                      </div>
+                      {getOutcomeBadge(log.outcome)}
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => handleEditLog(log)}>
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <p className="text-sm mb-3">{log.description}</p>
+                  
+                  {log.aiSuggestion && (
+                    <div className="bg-accent/50 rounded-lg p-3 border border-accent/20">
+                      <div className="flex items-start gap-2">
+                        <div className="w-5 h-5 bg-gradient-to-r from-purple-500 to-pink-500 rounded flex items-center justify-center text-white text-xs font-bold mt-0.5">
+                          AI
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm">{log.aiSuggestion}</p>
+                          <div className="flex gap-2 mt-2">
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="h-7 text-xs"
+                              onClick={() => {
+                                const updatedLogs = logs.map(l => 
+                                  l.id === log.id ? { ...l, status: "approved" } : l
+                                );
+                                setLogs(updatedLogs);
+                                toast({
+                                  title: "AI Suggestion Approved",
+                                  description: "The suggestion has been marked as approved"
+                                });
+                              }}
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              Approve
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="h-7 text-xs"
+                              onClick={() => handleEditLog(log)}
+                            >
+                              <Edit3 className="h-3 w-3 mr-1" />
+                              Edit
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No logs found</h3>
+                <p className="text-muted-foreground mb-4">
+                  There are currently no logs recorded for {selectedChildForView?.name} today.
+                </p>
+                <Button 
+                  onClick={() => {
+                    setDailyLogsOpen(false);
+                    setNewLogDialogOpen(true);
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Create New Log
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
