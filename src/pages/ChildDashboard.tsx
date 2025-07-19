@@ -67,7 +67,7 @@ const ChildDashboard = () => {
                 <img 
                   src="/lovable-uploads/0a4f00ab-2015-4104-8aa4-979cc6fe3aea.png" 
                   alt="CoCare Logo" 
-                  className="h-10 w-auto drop-shadow-sm"
+                  className="h-16 w-auto drop-shadow-sm"
                 />
                 <div className="relative">
                   <img
