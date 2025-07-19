@@ -221,10 +221,11 @@ const CaregiverDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="logs">Care Logs</TabsTrigger>
             <TabsTrigger value="children">Children</TabsTrigger>
+            <TabsTrigger value="behavior">Behavior Management</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -458,6 +459,76 @@ const CaregiverDashboard = () => {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* Behavior Management Tab */}
+          <TabsContent value="behavior">
+            <Card className="bg-white shadow-md rounded-xl p-4">
+              <CardContent>
+                <h3 className="text-2xl font-bold mb-4 text-purple-600">📘 Behavior Management Plan Phases</h3>
+
+                <div className="space-y-6">
+
+                  {/* Phase 1 */}
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-700 mb-2">1. Addressing the Problem Behavior</h4>
+                    <ul className="list-disc ml-6 text-gray-600 space-y-1">
+                      <li>Establish a relationship with the child and their support system.</li>
+                      <li>Discuss concerns and explore possible solutions.</li>
+                      <li>Apply classroom or routine-based interventions first.</li>
+                      <li>If these are unsuccessful, notify appropriate support staff or professionals.</li>
+                    </ul>
+                  </div>
+
+                  {/* Phase 2 */}
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-700 mb-2">2. Understanding the Behavior</h4>
+                    <ul className="list-disc ml-6 text-gray-600 space-y-1">
+                      <li>Consult with specialists (psychologists, counselors, etc.) as needed.</li>
+                      <li>Gather and review data such as observations and behavior checklists.</li>
+                      <li>Identify triggers, patterns, and possible causes of behavior.</li>
+                    </ul>
+                  </div>
+
+                  {/* Phase 3 */}
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-700 mb-2">3. Developing a Support Plan</h4>
+                    <ul className="list-disc ml-6 text-gray-600 space-y-1">
+                      <li>Hold a team meeting to strategize around:
+                        <ul className="list-disc ml-6">
+                          <li>Environmental factors</li>
+                          <li>Functional behavior causes</li>
+                        </ul>
+                      </li>
+                      <li>Create a formal Behavior Support Plan (BSP).</li>
+                      <li>Set clear goals and assign roles/responsibilities.</li>
+                      <li>Establish a system for ongoing communication.</li>
+                    </ul>
+                  </div>
+
+                  {/* Phase 4 */}
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-700 mb-2">4. Implementing the Support Plan</h4>
+                    <ul className="list-disc ml-6 text-gray-600 space-y-1">
+                      <li>Adjust routines to support new, positive behaviors.</li>
+                      <li>Apply proactive and reactive strategies.</li>
+                      <li>Ensure consistent follow-through on goals and communication.</li>
+                    </ul>
+                  </div>
+
+                  {/* Phase 5 */}
+                  <div>
+                    <h4 className="text-xl font-semibold text-gray-700 mb-2">5. Monitoring & Evaluation</h4>
+                    <ul className="list-disc ml-6 text-gray-600 space-y-1">
+                      <li>Track progress and update team regularly.</li>
+                      <li>Revise and improve the plan as needed.</li>
+                      <li>Celebrate successes and adapt to challenges.</li>
+                    </ul>
+                  </div>
+
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>
