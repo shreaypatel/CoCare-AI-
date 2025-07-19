@@ -8,10 +8,10 @@ interface CoCareLogoProps {
 
 const CoCareLogo: React.FC<CoCareLogoProps> = ({ size = 'lg', className = '' }) => {
   const sizeClasses = {
-    sm: 'w-24 h-8',
-    md: 'w-48 h-16', 
-    lg: 'w-72 h-24',
-    xl: 'w-96 h-32'
+    sm: 'w-32 h-12',
+    md: 'w-64 h-24', 
+    lg: 'w-96 h-36',
+    xl: 'w-128 h-48'
   };
 
   return (
