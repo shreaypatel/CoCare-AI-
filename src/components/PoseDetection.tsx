@@ -52,10 +52,10 @@ const PoseDetection: React.FC<PoseDetectionProps> = ({
     try {
       setIsLoading(true);
       // Import MediaPipe modules
-      const { PoseLandmarker, FilesetResolver, DrawingUtils } = await import('@mediapipe/tasks-vision');
+      const { PoseLandmarker, FilesetResolver } = await import('@mediapipe/tasks-vision');
       
       const vision = await FilesetResolver.forVisionTasks(
-        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
       );
       
       poseLandmarkerRef.current = await PoseLandmarker.createFromOptions(vision, {
@@ -127,35 +127,41 @@ const PoseDetection: React.FC<PoseDetectionProps> = ({
     video.style.height = "360px";
     canvas.style.width = "480px";
     video.style.width = "480px";
+    canvas.width = 480;
+    canvas.height = 360;
     
     let startTimeMs = performance.now();
     if (lastVideoTimeRef.current !== video.currentTime) {
       lastVideoTimeRef.current = video.currentTime;
       
-      const result = await poseLandmarkerRef.current.detectForVideo(video, startTimeMs);
-      
-      canvasCtx.save();
-      canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      if (result.landmarks && result.landmarks.length > 0) {
-        const { DrawingUtils } = await import('@mediapipe/tasks-vision');
-        const drawingUtils = new DrawingUtils(canvasCtx);
+      try {
+        const result = poseLandmarkerRef.current.detectForVideo(video, startTimeMs);
         
-        for (const landmark of result.landmarks) {
-          drawingUtils.drawLandmarks(landmark, {
-            radius: (data: any) => DrawingUtils.lerp(data.from?.z || 0, -0.15, 0.1, 5, 1)
-          });
-          drawingUtils.drawConnectors(landmark, (await import('@mediapipe/tasks-vision')).PoseLandmarker.POSE_CONNECTIONS);
+        canvasCtx.save();
+        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (result.landmarks && result.landmarks.length > 0) {
+          const { DrawingUtils, PoseLandmarker } = await import('@mediapipe/tasks-vision');
+          const drawingUtils = new DrawingUtils(canvasCtx);
+          
+          for (const landmark of result.landmarks) {
+            drawingUtils.drawLandmarks(landmark, {
+              radius: (data: any) => DrawingUtils.lerp(data.from?.z || 0, -0.15, 0.1, 5, 1)
+            });
+            drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS);
+          }
+          
+          // Process pose data for activity detection
+          processPoseData(result.landmarks);
+          
+          // Keep original pose detection for compatibility
+          analyzePose(result.landmarks);
         }
         
-        // Process pose data for activity detection
-        processPoseData(result.landmarks);
-        
-        // Keep original pose detection for compatibility
-        analyzePose(result.landmarks);
+        canvasCtx.restore();
+      } catch (error) {
+        console.error('Error in pose detection:', error);
       }
-      
-      canvasCtx.restore();
     }
     
     if (isActive) {
