@@ -16,6 +16,7 @@ import {
   Lock
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import childAvatar from "@/assets/child-avatar.png";
 import CoCareLogo from "@/components/CoCareLogo";
 import { ColorMatchGame } from "@/components/games/ColorMatchGame";
 import { MemoryGame } from "@/components/games/MemoryGame";
@@ -27,6 +28,14 @@ const ChildDashboard = () => {
   const [stimulationLevel, setStimulationLevel] = useState(5);
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [currentCoins, setCurrentCoins] = useState(75);
+  const [moodCoinsEarned, setMoodCoinsEarned] = useState(false);
+  const [avatars, setAvatars] = useState([
+    { name: "Friendly Cat", icon: "🐱", cost: 0, owned: true, equipped: true },
+    { name: "Happy Dog", icon: "🐶", cost: 50, owned: true, equipped: false },
+    { name: "Magic Unicorn", icon: "🦄", cost: 100, owned: false, equipped: false },
+    { name: "Space Robot", icon: "🤖", cost: 150, owned: false, equipped: false },
+    { name: "Rainbow Dragon", icon: "🐉", cost: 200, owned: false, equipped: false }
+  ]);
 
   const moods = [
     { emoji: "😊", label: "Happy", value: "happy" },
@@ -38,35 +47,63 @@ const ChildDashboard = () => {
   ];
 
   const games = [
-    { name: "Color Match", icon: "🎨", difficulty: "Easy", unlocked: true, component: "ColorMatchGame" },
-    { name: "Shape Puzzle", icon: "🧩", difficulty: "Medium", unlocked: true, component: "ShapePuzzleGame" },
-    { name: "Memory Game", icon: "🧠", difficulty: "Easy", unlocked: true, component: "MemoryGame" },
-    { name: "Story Builder", icon: "📚", difficulty: "Hard", unlocked: false, component: null }
+    { name: "Color Match", icon: "🎨", difficulty: "Easy", unlocked: true, component: "ColorMatchGame", coinReward: 5 },
+    { name: "Shape Puzzle", icon: "🧩", difficulty: "Medium", unlocked: true, component: "ShapePuzzleGame", coinReward: 10 },
+    { name: "Memory Game", icon: "🧠", difficulty: "Easy", unlocked: true, component: "MemoryGame", coinReward: 5 },
+    { name: "Story Builder", icon: "📚", difficulty: "Hard", unlocked: false, component: null, coinReward: 15 }
   ];
 
-  const avatars = [
-    { name: "Friendly Cat", icon: "🐱", cost: 0, owned: true, equipped: true },
-    { name: "Happy Dog", icon: "🐶", cost: 50, owned: true, equipped: false },
-    { name: "Magic Unicorn", icon: "🦄", cost: 100, owned: false, equipped: false },
-    { name: "Space Robot", icon: "🤖", cost: 150, owned: false, equipped: false },
-    { name: "Rainbow Dragon", icon: "🐉", cost: 200, owned: false, equipped: false }
-  ];
 
   const loginStreak = 7;
 
-  const handleGameWin = (score: number) => {
-    setCurrentCoins(currentCoins + Math.floor(score / 10));
+  const handleMoodSelection = (moodValue: string) => {
+    setSelectedMood(moodValue);
+    if (!moodCoinsEarned) {
+      setCurrentCoins(currentCoins + 5);
+      setMoodCoinsEarned(true);
+    }
+  };
+
+  const handleGameWin = (score: number, gameComponent: string) => {
+    const game = games.find(g => g.component === gameComponent);
+    const coinsEarned = game ? game.coinReward + Math.floor(score / 10) : 5;
+    setCurrentCoins(currentCoins + coinsEarned);
     setActiveGame(null);
   };
 
+  const handleEquipAvatar = (index: number) => {
+    const avatar = avatars[index];
+    if (avatar.owned) {
+      setAvatars(avatars.map((av, i) => ({
+        ...av,
+        equipped: i === index
+      })));
+    }
+  };
+
+  const handleBuyAvatar = (index: number) => {
+    const avatar = avatars[index];
+    if (currentCoins >= avatar.cost && !avatar.owned) {
+      setCurrentCoins(currentCoins - avatar.cost);
+      setAvatars(avatars.map((av, i) => 
+        i === index ? { ...av, owned: true } : av
+      ));
+    }
+  };
+
+  const getEquippedAvatar = () => {
+    return avatars.find(av => av.equipped) || avatars[0];
+  };
+
   const renderActiveGame = () => {
+    const game = games.find(g => g.component === activeGame);
     switch (activeGame) {
       case "ColorMatchGame":
-        return <ColorMatchGame onClose={() => setActiveGame(null)} onWin={handleGameWin} />;
+        return <ColorMatchGame onClose={() => setActiveGame(null)} onWin={(score) => handleGameWin(score, "ColorMatchGame")} />;
       case "MemoryGame":
-        return <MemoryGame onClose={() => setActiveGame(null)} onWin={handleGameWin} />;
+        return <MemoryGame onClose={() => setActiveGame(null)} onWin={(score) => handleGameWin(score, "MemoryGame")} />;
       case "ShapePuzzleGame":
-        return <ShapePuzzleGame onClose={() => setActiveGame(null)} onWin={handleGameWin} />;
+        return <ShapePuzzleGame onClose={() => setActiveGame(null)} onWin={(score) => handleGameWin(score, "ShapePuzzleGame")} />;
       default:
         return null;
     }
@@ -98,12 +135,12 @@ const ChildDashboard = () => {
                 <CoCareLogo size="lg" />
                 <div className="relative">
                   <img
-                    src="/placeholder.svg"
+                    src={childAvatar}
                     alt="Your avatar"
-                    className="w-10 h-10 rounded-full border-2 border-primary/20"
+                    className="w-10 h-10 rounded-full border-2 border-primary/20 object-cover"
                   />
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xs">
-                    🐱
+                    {getEquippedAvatar().icon}
                   </div>
                 </div>
                 <div>
@@ -145,7 +182,7 @@ const ChildDashboard = () => {
               {moods.map((mood) => (
                 <button
                   key={mood.value}
-                  onClick={() => setSelectedMood(mood.value)}
+                  onClick={() => handleMoodSelection(mood.value)}
                   className={`p-4 rounded-2xl border-2 transition-all hover:scale-105 ${
                     selectedMood === mood.value
                       ? "border-primary bg-primary/10 shadow-lg"
@@ -158,9 +195,12 @@ const ChildDashboard = () => {
               ))}
             </div>
             {selectedMood && (
-              <div className="mt-4 p-3 bg-primary/10 rounded-lg text-center">
+              <div className="mt-4 p-3 bg-primary/10 rounded-lg text-center animate-fade-in">
                 <p className="text-sm text-primary font-medium">
-                  Thanks for sharing! You earned 5 coins! 🪙
+                  {moodCoinsEarned ? 
+                    "Thanks for sharing your feelings! 🪙" : 
+                    "Thanks for sharing! You earned 5 coins! 🪙"
+                  }
                 </p>
               </div>
             )}
@@ -295,11 +335,11 @@ const ChildDashboard = () => {
                           Equipped
                         </Button>
                       ) : avatar.owned ? (
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => handleEquipAvatar(index)}>
                           Equip
                         </Button>
                       ) : avatar.cost <= currentCoins ? (
-                        <Button size="sm" variant="default">
+                        <Button size="sm" variant="default" onClick={() => handleBuyAvatar(index)}>
                           Buy
                         </Button>
                       ) : (
