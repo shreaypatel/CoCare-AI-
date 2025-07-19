@@ -139,9 +139,9 @@ const ChildDashboard = () => {
                   <img
                     src={childAvatar}
                     alt="Your avatar"
-                    className="w-10 h-10 rounded-full border-2 border-primary/20 object-cover"
+                    className="w-16 h-16 rounded-full border-3 border-primary/30 object-cover shadow-lg"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xs">
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-sm shadow-md">
                     {getEquippedAvatar().icon}
                   </div>
                 </div>
@@ -383,8 +383,8 @@ const ChildDashboard = () => {
                 <div className="text-sm text-muted-foreground">Games Played</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-500">15</div>
-                <div className="text-sm text-muted-foreground">Coins Earned</div>
+                <div className="text-2xl font-bold text-orange-500">{currentCoins}</div>
+                <div className="text-sm text-muted-foreground">Total Coins</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-purple-500">7</div>
