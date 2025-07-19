@@ -16,6 +16,7 @@ import {
   Lock
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import childAvatar from "@/assets/child-avatar.png";
 import CoCareLogo from "@/components/CoCareLogo";
 import { ColorMatchGame } from "@/components/games/ColorMatchGame";
@@ -24,6 +25,7 @@ import { ShapePuzzleGame } from "@/components/games/ShapePuzzleGame";
 
 const ChildDashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [stimulationLevel, setStimulationLevel] = useState(5);
   const [activeGame, setActiveGame] = useState<string | null>(null);
@@ -156,7 +158,17 @@ const ChildDashboard = () => {
                 <Star className="h-3 w-3 mr-1" />
                 {loginStreak} day streak
               </Badge>
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  // For now, show a toast - could be replaced with settings modal later
+                  toast({
+                    title: "Settings",
+                    description: "Settings panel coming soon!"
+                  });
+                }}
+              >
                 <Settings className="h-4 w-4" />
               </Button>
             </div>

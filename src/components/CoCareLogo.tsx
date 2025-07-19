@@ -17,42 +17,55 @@ const CoCareLogo: React.FC<CoCareLogoProps> = ({ size = 'md', className = '' }) 
   return (
     <div className={`${sizeClasses[size]} ${className} flex items-center`}>
       <svg
-        viewBox="0 0 340 80"
+        viewBox="0 0 400 80"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full"
       >
-        {/* Heart shape with proper curves */}
+        {/* Heart shape with smooth curves based on template */}
         <path
-          d="M20 32C20 20 28 12 40 12C47 12 53 16 56 22C59 16 65 12 72 12C84 12 92 20 92 32C92 44 56 78 56 78S20 44 20 32Z"
-          fill="#87CEEB"
+          d="M15 30C15 18 23 8 35 8C42 8 48 12 52 18C56 12 62 8 69 8C81 8 89 18 89 30C89 45 52 75 52 75S15 45 15 30Z"
+          fill="url(#heartGradient)"
+          className="drop-shadow-sm"
         />
         
-        {/* Puzzle piece cutout with flowing curves */}
+        {/* Puzzle piece - refined shape */}
         <path
-          d="M40 30C40 28 42 26 44 26L50 26C52 24 54 24 56 26C58 28 58 30 56 32C58 34 58 36 56 38C54 40 52 40 50 38L44 38C42 40 40 40 38 38C36 36 36 34 38 32C36 30 36 28 38 26C40 24 42 24 44 26L44 30L50 30C52 28 54 28 56 30C58 32 58 34 56 36L50 36L44 36C42 38 40 38 38 36C36 34 36 32 38 30C36 28 36 26 38 24C40 22 42 22 44 24L44 30L40 30Z"
+          d="M40 28C40 25 42 23 45 23H50C52 21 55 21 57 23C59 25 59 28 57 30C59 32 59 35 57 37C55 39 52 39 50 37H45C42 39 40 39 38 37C36 35 36 32 38 30C36 28 36 25 38 23C40 21 42 21 45 23V28H50C52 26 54 26 56 28C58 30 58 32 56 34H50V37H45C42 37 40 35 40 32V28Z"
           fill="white"
+          className="drop-shadow-sm"
         />
         
-        {/* Simplified puzzle piece - flowing S curve */}
-        <path
-          d="M42 30C42 28 44 26 46 26L50 26C52 26 54 28 54 30C54 32 52 34 50 34C52 34 54 36 54 38C54 40 52 42 50 42L46 42C44 42 42 40 42 38C42 36 44 34 46 34C44 34 42 32 42 30Z"
-          fill="white"
-        />
+        {/* Inner puzzle detail */}
+        <circle cx="47" cy="30" r="2" fill="url(#heartGradient)" />
         
-        {/* CoCare text with proper typography */}
+        {/* CooCare text with modern typography */}
         <text
           x="110"
-          y="40"
-          fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontSize="36"
-          fontWeight="500"
-          fill="#87CEEB"
+          y="42"
+          fontFamily="'Inter', system-ui, -apple-system, sans-serif"
+          fontSize="32"
+          fontWeight="600"
+          fill="url(#textGradient)"
           dominantBaseline="central"
-          letterSpacing="-0.02em"
+          letterSpacing="-0.025em"
         >
           CoCare
         </text>
+        
+        {/* Gradient definitions */}
+        <defs>
+          <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#7dd3fc" />
+            <stop offset="50%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0ea5e9" />
+          </linearGradient>
+          <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#0ea5e9" />
+            <stop offset="50%" stopColor="#3b82f6" />
+            <stop offset="100%" stopColor="#1d4ed8" />
+          </linearGradient>
+        </defs>
       </svg>
     </div>
   );

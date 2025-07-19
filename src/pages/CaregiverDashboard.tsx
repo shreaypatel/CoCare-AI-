@@ -17,12 +17,14 @@ import {
   Plus
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 import { EditLogDialog } from "@/components/EditLogDialog";
 import { NewLogDialog } from "@/components/NewLogDialog";
 import CoCareLogo from "@/components/CoCareLogo";
 
 const CaregiverDashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedChild, setSelectedChild] = useState("alex");
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [newLogDialogOpen, setNewLogDialogOpen] = useState(false);
@@ -147,7 +149,17 @@ const CaregiverDashboard = () => {
               <Badge variant="secondary" className="bg-green-500/20 text-green-700">
                 2 Active Children
               </Badge>
-              <Button variant="ghost" size="icon">
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  // For now, show a toast - could be replaced with settings modal later
+                  toast({
+                    title: "Settings",
+                    description: "Settings panel coming soon!"
+                  });
+                }}
+              >
                 <Settings className="h-4 w-4" />
               </Button>
             </div>
@@ -294,11 +306,31 @@ const CaregiverDashboard = () => {
                           <div className="flex-1">
                             <p className="text-sm">{log.aiSuggestion}</p>
                             <div className="flex gap-2 mt-2">
-                              <Button size="sm" variant="outline" className="h-7 text-xs">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-7 text-xs"
+                                onClick={() => {
+                                  // Update log status to approved
+                                  const updatedLogs = logs.map(l => 
+                                    l.id === log.id ? { ...l, status: "approved" } : l
+                                  );
+                                  setLogs(updatedLogs);
+                                  toast({
+                                    title: "AI Suggestion Approved",
+                                    description: "The suggestion has been marked as approved"
+                                  });
+                                }}
+                              >
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 Approve
                               </Button>
-                              <Button size="sm" variant="outline" className="h-7 text-xs">
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-7 text-xs"
+                                onClick={() => handleEditLog(log)}
+                              >
                                 <Edit3 className="h-3 w-3 mr-1" />
                                 Edit
                               </Button>
@@ -354,11 +386,31 @@ const CaregiverDashboard = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Button variant="outline" className="w-full justify-start">
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start"
+                        onClick={() => {
+                          toast({
+                            title: "Behavior Graph",
+                            description: `Opening behavior analytics for ${child.name}...`
+                          });
+                        }}
+                      >
                         <TrendingUp className="h-4 w-4 mr-2" />
                         View Behavior Graph
                       </Button>
-                      <Button variant="outline" className="w-full justify-start">
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start"
+                        onClick={() => {
+                          // Filter logs for this child and show relevant logs
+                          const childLogs = logs.filter(log => log.child === child.name);
+                          toast({
+                            title: "Daily Logs",
+                            description: `Found ${childLogs.length} logs for ${child.name} today`
+                          });
+                        }}
+                      >
                         <FileText className="h-4 w-4 mr-2" />
                         View Daily Logs
                       </Button>
