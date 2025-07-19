@@ -18,9 +18,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import childAvatar from "@/assets/child-avatar.png";
 import CoCareLogo from "@/components/CoCareLogo";
+import PoseDetection from "@/components/PoseDetection";
 import { ColorMatchGame } from "@/components/games/ColorMatchGame";
 import { MemoryGame } from "@/components/games/MemoryGame";
 import { ShapePuzzleGame } from "@/components/games/ShapePuzzleGame";
+import { toast } from "@/hooks/use-toast";
 
 const ChildDashboard = () => {
   const navigate = useNavigate();
@@ -29,6 +31,7 @@ const ChildDashboard = () => {
   const [activeGame, setActiveGame] = useState<string | null>(null);
   const [currentCoins, setCurrentCoins] = useState(75);
   const [moodCoinsEarned, setMoodCoinsEarned] = useState(false);
+  const [activityLogs, setActivityLogs] = useState<Array<{timestamp: number, activity: string}>>([]);
   const [avatars, setAvatars] = useState([
     { name: "Friendly Cat", icon: "🐱", cost: 0, owned: true, equipped: true },
     { name: "Happy Dog", icon: "🐶", cost: 50, owned: true, equipped: false },
@@ -61,6 +64,30 @@ const ChildDashboard = () => {
     if (!moodCoinsEarned) {
       setCurrentCoins(currentCoins + 5);
       setMoodCoinsEarned(true);
+      toast({
+        title: "Coins Earned! 🪙",
+        description: "+5 coins for sharing your mood!",
+      });
+    }
+  };
+
+  const handlePoseDetected = (pose: string, confidence: number) => {
+    // Only log high-confidence poses and avoid spam
+    if (confidence > 0.85) {
+      const now = Date.now();
+      const recentActivity = activityLogs.find(log => 
+        now - log.timestamp < 30000 // 30 seconds
+      );
+      
+      // Only create new log if it's been more than 30 seconds since last activity
+      if (!recentActivity) {
+        setActivityLogs(prev => [...prev, { timestamp: now, activity: pose }]);
+        setCurrentCoins(prev => prev + 2);
+        toast({
+          title: "Activity Detected! 🏃‍♀️",
+          description: `+2 coins for being active! (${pose})`,
+        });
+      }
     }
   };
 
@@ -245,6 +272,9 @@ const ChildDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Activity Tracker */}
+        <PoseDetection onPoseDetected={handlePoseDetected} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Games */}
